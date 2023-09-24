@@ -4,4 +4,5 @@ website:
       - index.ipynb
       - section: Notebooks
         contents:
-          - notebooks/AlphaMissense_to_pdb.ipynb
+          - notebooks/1_AlphaMissense_to_pdb.ipynb
+          - notebooks/1_bubble_plot.ipynb
