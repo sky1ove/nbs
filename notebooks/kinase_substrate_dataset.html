@@ -1,0 +1,2213 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.450">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>nbs - Calculate substrate specificity from kinase-substrate dataset</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+
+<link rel="stylesheet" href="../styles.css">
+<meta property="og:title" content="nbs - Calculate substrate specificity from kinase-substrate dataset">
+<meta property="og:description" content="">
+<meta property="og:image" content="https://sky1ove.github.io/nbs/notebooks/3_Kinase_substrate_dataset_files/figure-html/cell-12-output-1.png">
+<meta property="og:site-name" content="nbs">
+<meta property="og:image:height" content="877">
+<meta property="og:image:width" content="1133">
+<meta name="twitter:title" content="nbs - Calculate substrate specificity from kinase-substrate dataset">
+<meta name="twitter:description" content="">
+<meta name="twitter:image" content="https://sky1ove.github.io/nbs/notebooks/3_Kinase_substrate_dataset_files/figure-html/cell-12-output-1.png">
+<meta name="twitter:image-height" content="877">
+<meta name="twitter:image-width" content="1133">
+<meta name="twitter:card" content="summary_large_image">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">nbs</span>
+    </a>
+  </div>
+        <div class="quarto-navbar-tools ms-auto">
+</div>
+          <div id="quarto-search" class="" title="Search"></div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../notebooks/alphamissense_to_pdb.html">Notebooks</a></li><li class="breadcrumb-item"><a href="../notebooks/kinase_substrate_dataset.html">Calculate substrate specificity from kinase-substrate dataset</a></li></ol></nav>
+      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+      </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">nbs</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+ <span class="menu-text">Notebooks</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notebooks/alphamissense_to_pdb.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Load AlphaMissense score</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notebooks/bubble_plot.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Bubble plot</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notebooks/get_top_genes_reactome.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Get top-regulated genes for Reactome Gene list analysis</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notebooks/kinase_substrate_dataset.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Calculate substrate specificity from kinase-substrate dataset</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#setup" id="toc-setup" class="nav-link active" data-scroll-target="#setup">Setup</a></li>
+  <li><a href="#load-data" id="toc-load-data" class="nav-link" data-scroll-target="#load-data">Load data</a></li>
+  <li><a href="#get-heatmap-of-specific-kinase" id="toc-get-heatmap-of-specific-kinase" class="nav-link" data-scroll-target="#get-heatmap-of-specific-kinase">Get heatmap of specific kinase</a></li>
+  <li><a href="#plot" id="toc-plot" class="nav-link" data-scroll-target="#plot">Plot</a></li>
+  </ul>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/sky1ove/nbs/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Calculate substrate specificity from kinase-substrate dataset</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<section id="setup" class="level2">
+<h2 class="anchored" data-anchor-id="setup">Setup</h2>
+<div class="cell" data-jupyter="{&quot;outputs_hidden&quot;:true}" data-tags="[]" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>pip install git<span class="op">+</span>https:<span class="op">//</span>github.com<span class="op">/</span>sky1ove<span class="op">/</span>katlas.git</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="29">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> katlas.core <span class="im">import</span> <span class="op">*</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy.stats <span class="im">import</span> spearmanr, pearsonr</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="30">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>sns.<span class="bu">set</span>(rc<span class="op">=</span>{<span class="st">"figure.dpi"</span>:<span class="dv">200</span>, <span class="st">'savefig.dpi'</span>:<span class="dv">200</span>})</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>sns.set_context(<span class="st">'notebook'</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>sns.set_style(<span class="st">"ticks"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="31">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_heatmap(df, <span class="co"># Stacked Dataframe with kinase as index, substrates as columns</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>                kinase <span class="co"># A specific kinase name in index</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>               ):</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    aa_order <span class="op">=</span> [i <span class="cf">for</span> i <span class="kw">in</span> <span class="st">'PGACSTVILMFYWHKRQNDEty'</span>]</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="co"># position_order = [str(i) for i in range(-5,5)]</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="co"># position_order.remove('0')</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    kk <span class="op">=</span> get_one_kinase(df, kinase).T</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="co"># kkk = kk.reindex(index=aa_order, columns=position_order)</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    kkk <span class="op">=</span> kk.reindex(index<span class="op">=</span>aa_order)</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    plt.figure(figsize<span class="op">=</span>(<span class="dv">6</span>, <span class="dv">10</span>))</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    sns.heatmap(kkk, cmap<span class="op">=</span><span class="st">'binary'</span>, annot<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    plt.title(<span class="ss">f'</span><span class="sc">{</span>kinase<span class="sc">}</span><span class="ss"> from PSPA data'</span>)</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="32">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> plot_corr(</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>              x,</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>              y,</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>              xlabel<span class="op">=</span><span class="va">None</span>,<span class="co"># x axis label</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>              ylabel<span class="op">=</span><span class="va">None</span>,<span class="co"># y axis label</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>              order<span class="op">=</span><span class="dv">1</span>, <span class="co"># polynomial level, if straight, order=1</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>              method <span class="op">=</span> <span class="st">'pearson'</span>, <span class="co"># can be spearman</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>             ):</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    <span class="co">"Given a dataframe and the name of two columns, plot the two columns' correlation"</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> method <span class="op">==</span> <span class="st">'spearman'</span>:</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>        correlation, pvalue <span class="op">=</span> spearmanr(x, y)</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">elif</span> method <span class="op">==</span> <span class="st">'pearson'</span>:</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>        correlation, pvalue <span class="op">=</span> pearsonr(x, y)</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>        <span class="cf">raise</span> <span class="pp">ValueError</span>(<span class="st">"Invalid correlation method. Choose 'spearman' or 'pearson'."</span>)</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>    sns.regplot(</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>                x<span class="op">=</span>x,</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>                y<span class="op">=</span>y,</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>                order<span class="op">=</span>order,</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>                line_kws<span class="op">=</span>{<span class="st">'color'</span>: <span class="st">'gray'</span>}</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>           )</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> xlabel <span class="kw">is</span> <span class="kw">not</span> <span class="va">None</span>:</span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>        plt.xlabel(xlabel)</span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> ylabel <span class="kw">is</span> <span class="kw">not</span> <span class="va">None</span>:</span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>        plt.ylabel(ylabel)</span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>    correlation_text <span class="op">=</span> <span class="ss">f'Spearman: </span><span class="sc">{</span>correlation<span class="sc">:.2f}</span><span class="ss">'</span> <span class="cf">if</span> method <span class="op">==</span> <span class="st">'spearman'</span> <span class="cf">else</span> <span class="ss">f'Pearson: </span><span class="sc">{</span>correlation<span class="sc">:.2f}</span><span class="ss">'</span></span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a>    plt.text(x<span class="op">=</span><span class="fl">0.8</span>, y<span class="op">=</span><span class="fl">0.1</span>, s<span class="op">=</span>correlation_text, transform<span class="op">=</span>plt.gca().transAxes, ha<span class="op">=</span><span class="st">'center'</span>, va<span class="op">=</span><span class="st">'center'</span>)</span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a>    plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="load-data" class="level2">
+<h2 class="anchored" data-anchor-id="load-data">Load data</h2>
+<div class="cell" data-execution_count="33">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># kinase-substrate data</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>df<span class="op">=</span> pd.read_csv(<span class="st">'kinase_substrates.csv'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="34">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="34">
+<div>
+
+
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">KINASE</th>
+<th data-quarto-table-cell-role="th">SITE_+/-7_AA</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>DYRK2</td>
+<td>LGSsRPSsAPGMLPL</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>PAK2</td>
+<td>RtPGRPLsSYGMDSR</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>PAK2</td>
+<td>GVRRRRLsNVsLTGL</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>PAK2</td>
+<td>IRCLRRDsHKVDNYL</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>PAK2</td>
+<td>LHCLRRDsHKIDNYL</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">23000</td>
+<td>ULK2</td>
+<td>QRVLDtssLtQsAPA</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">23001</td>
+<td>ULK2</td>
+<td>DtssLtQsAPAsPtN</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">23002</td>
+<td>ULK2</td>
+<td>LAQPINFsVSLSNSH</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">23003</td>
+<td>ULK2</td>
+<td>ESsPILTsFELVKVP</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">23004</td>
+<td>ULK2</td>
+<td>THRRMVVsMPNLQDI</td>
+</tr>
+</tbody>
+</table>
+
+<p>23005 rows × 2 columns</p>
+</div>
+</div>
+</div>
+<p>Split phosphosite sequence to single amino acid</p>
+<div class="cell" data-execution_count="35">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Split the 'SITE_+/-7_AA' column into individual letters</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>split_cols <span class="op">=</span> df[<span class="st">'SITE_+/-7_AA'</span>].<span class="bu">apply</span>(<span class="bu">list</span>).<span class="bu">apply</span>(pd.Series)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Rename the new columns from -7 to 7</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>split_cols.columns <span class="op">=</span> <span class="bu">range</span>(<span class="op">-</span><span class="dv">7</span>, <span class="dv">8</span>)</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Concatenate the original dataframe with the split columns</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>df2 <span class="op">=</span> pd.concat([df, split_cols], axis<span class="op">=</span><span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="36">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>df2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="36">
+<div>
+
+
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">KINASE</th>
+<th data-quarto-table-cell-role="th">SITE_+/-7_AA</th>
+<th data-quarto-table-cell-role="th">-7</th>
+<th data-quarto-table-cell-role="th">-6</th>
+<th data-quarto-table-cell-role="th">-5</th>
+<th data-quarto-table-cell-role="th">-4</th>
+<th data-quarto-table-cell-role="th">-3</th>
+<th data-quarto-table-cell-role="th">-2</th>
+<th data-quarto-table-cell-role="th">-1</th>
+<th data-quarto-table-cell-role="th">0</th>
+<th data-quarto-table-cell-role="th">1</th>
+<th data-quarto-table-cell-role="th">2</th>
+<th data-quarto-table-cell-role="th">3</th>
+<th data-quarto-table-cell-role="th">4</th>
+<th data-quarto-table-cell-role="th">5</th>
+<th data-quarto-table-cell-role="th">6</th>
+<th data-quarto-table-cell-role="th">7</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>DYRK2</td>
+<td>LGSsRPSsAPGMLPL</td>
+<td>L</td>
+<td>G</td>
+<td>S</td>
+<td>s</td>
+<td>R</td>
+<td>P</td>
+<td>S</td>
+<td>s</td>
+<td>A</td>
+<td>P</td>
+<td>G</td>
+<td>M</td>
+<td>L</td>
+<td>P</td>
+<td>L</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>PAK2</td>
+<td>RtPGRPLsSYGMDSR</td>
+<td>R</td>
+<td>t</td>
+<td>P</td>
+<td>G</td>
+<td>R</td>
+<td>P</td>
+<td>L</td>
+<td>s</td>
+<td>S</td>
+<td>Y</td>
+<td>G</td>
+<td>M</td>
+<td>D</td>
+<td>S</td>
+<td>R</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>PAK2</td>
+<td>GVRRRRLsNVsLTGL</td>
+<td>G</td>
+<td>V</td>
+<td>R</td>
+<td>R</td>
+<td>R</td>
+<td>R</td>
+<td>L</td>
+<td>s</td>
+<td>N</td>
+<td>V</td>
+<td>s</td>
+<td>L</td>
+<td>T</td>
+<td>G</td>
+<td>L</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>PAK2</td>
+<td>IRCLRRDsHKVDNYL</td>
+<td>I</td>
+<td>R</td>
+<td>C</td>
+<td>L</td>
+<td>R</td>
+<td>R</td>
+<td>D</td>
+<td>s</td>
+<td>H</td>
+<td>K</td>
+<td>V</td>
+<td>D</td>
+<td>N</td>
+<td>Y</td>
+<td>L</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>PAK2</td>
+<td>LHCLRRDsHKIDNYL</td>
+<td>L</td>
+<td>H</td>
+<td>C</td>
+<td>L</td>
+<td>R</td>
+<td>R</td>
+<td>D</td>
+<td>s</td>
+<td>H</td>
+<td>K</td>
+<td>I</td>
+<td>D</td>
+<td>N</td>
+<td>Y</td>
+<td>L</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">23000</td>
+<td>ULK2</td>
+<td>QRVLDtssLtQsAPA</td>
+<td>Q</td>
+<td>R</td>
+<td>V</td>
+<td>L</td>
+<td>D</td>
+<td>t</td>
+<td>s</td>
+<td>s</td>
+<td>L</td>
+<td>t</td>
+<td>Q</td>
+<td>s</td>
+<td>A</td>
+<td>P</td>
+<td>A</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">23001</td>
+<td>ULK2</td>
+<td>DtssLtQsAPAsPtN</td>
+<td>D</td>
+<td>t</td>
+<td>s</td>
+<td>s</td>
+<td>L</td>
+<td>t</td>
+<td>Q</td>
+<td>s</td>
+<td>A</td>
+<td>P</td>
+<td>A</td>
+<td>s</td>
+<td>P</td>
+<td>t</td>
+<td>N</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">23002</td>
+<td>ULK2</td>
+<td>LAQPINFsVSLSNSH</td>
+<td>L</td>
+<td>A</td>
+<td>Q</td>
+<td>P</td>
+<td>I</td>
+<td>N</td>
+<td>F</td>
+<td>s</td>
+<td>V</td>
+<td>S</td>
+<td>L</td>
+<td>S</td>
+<td>N</td>
+<td>S</td>
+<td>H</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">23003</td>
+<td>ULK2</td>
+<td>ESsPILTsFELVKVP</td>
+<td>E</td>
+<td>S</td>
+<td>s</td>
+<td>P</td>
+<td>I</td>
+<td>L</td>
+<td>T</td>
+<td>s</td>
+<td>F</td>
+<td>E</td>
+<td>L</td>
+<td>V</td>
+<td>K</td>
+<td>V</td>
+<td>P</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">23004</td>
+<td>ULK2</td>
+<td>THRRMVVsMPNLQDI</td>
+<td>T</td>
+<td>H</td>
+<td>R</td>
+<td>R</td>
+<td>M</td>
+<td>V</td>
+<td>V</td>
+<td>s</td>
+<td>M</td>
+<td>P</td>
+<td>N</td>
+<td>L</td>
+<td>Q</td>
+<td>D</td>
+<td>I</td>
+</tr>
+</tbody>
+</table>
+
+<p>23005 rows × 17 columns</p>
+</div>
+</div>
+</div>
+<p>Remove kinase that appears less than 50 times</p>
+<div class="cell" data-execution_count="37">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>cnt <span class="op">=</span> df2.groupby(<span class="st">'KINASE'</span>).size().reset_index(name <span class="op">=</span> <span class="st">'cnt'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-tags="[]" data-execution_count="38">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>cnt.hist(bins<span class="op">=</span><span class="dv">100</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-12-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<div class="cell" data-execution_count="39">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>cnt_50 <span class="op">=</span> cnt[(cnt.cnt<span class="op">&gt;=</span><span class="dv">50</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="40">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>cnt_50.sort_values(<span class="st">'cnt'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="40">
+<div>
+
+
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">KINASE</th>
+<th data-quarto-table-cell-role="th">cnt</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">57</td>
+<td>CDC7</td>
+<td>51</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">44</td>
+<td>CAMK1A</td>
+<td>51</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">119</td>
+<td>DYRK2</td>
+<td>52</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">379</td>
+<td>ROCK2</td>
+<td>53</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">264</td>
+<td>MST1</td>
+<td>54</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">58</td>
+<td>CDK1</td>
+<td>869</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">127</td>
+<td>ERK2</td>
+<td>894</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">88</td>
+<td>CK2A1</td>
+<td>960</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">336</td>
+<td>PKCA</td>
+<td>1094</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">333</td>
+<td>PKACA</td>
+<td>1707</td>
+</tr>
+</tbody>
+</table>
+
+<p>84 rows × 2 columns</p>
+</div>
+</div>
+</div>
+<div class="cell" data-execution_count="41">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>df3 <span class="op">=</span> df2[df2.KINASE.isin(cnt_50.KINASE)].reset_index()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="42">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>aa <span class="op">=</span> Data.get_aa_info()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="43">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>aa.index</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="43">
+<pre><code>Index(['A', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'K', 'L', 'M', 'N', 'P', 'Q',
+       'R', 'S', 'T', 'V', 'W', 'Y', 's', 't', 'y', 'Kac', 'Kme3'],
+      dtype='object', name='aa')</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="55">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co">#In kinase-substrate datast, there are additional ['_', 'c', 'n', 'k', 'r', 's']</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="co"># amino acid order in Lew's paper</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>aa_order_paper <span class="op">=</span> [i <span class="cf">for</span> i <span class="kw">in</span> <span class="st">'PGACSTVILMFYWHKRQNDEty'</span>]</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="co"># full amino acid appeared in dataset</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>aa_order <span class="op">=</span> [i <span class="cf">for</span> i <span class="kw">in</span> <span class="st">'PGACSTVILMFYWHKRQNDEytsrkcn_'</span>]</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a><span class="co"># position order in Lew's paper</span></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>position_paper <span class="op">=</span> [<span class="op">-</span><span class="dv">5</span>,<span class="op">-</span><span class="dv">4</span>,<span class="op">-</span><span class="dv">3</span>,<span class="op">-</span><span class="dv">2</span>,<span class="op">-</span><span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>]</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a><span class="co"># full position in the dataset</span></span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>position <span class="op">=</span> [i <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="op">-</span><span class="dv">7</span>,<span class="dv">8</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="56">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># raw data from Lew's paper</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>raw <span class="op">=</span> Data.get_stack_raw().set_index(<span class="st">'kinase'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="get-heatmap-of-specific-kinase" class="level2">
+<h2 class="anchored" data-anchor-id="get-heatmap-of-specific-kinase">Get heatmap of specific kinase</h2>
+<div class="cell" data-execution_count="57">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_freq(df3, k):</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>    df_k <span class="op">=</span> df3.query(<span class="ss">f'KINASE=="</span><span class="sc">{</span>k<span class="sc">}</span><span class="ss">"'</span>).reset_index()</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>    <span class="co">#Count frequency for each amino acid at each position</span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>    melted_k <span class="op">=</span> df_k.melt(id_vars<span class="op">=</span>[<span class="st">'KINASE'</span>, <span class="st">'SITE_+/-7_AA'</span>], </span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>                    value_vars<span class="op">=</span>[i <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="op">-</span><span class="dv">7</span>, <span class="dv">8</span>)],</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>                    var_name<span class="op">=</span><span class="st">'Position'</span>, </span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>                    value_name<span class="op">=</span><span class="st">'aa'</span>)</span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Group by Position and Amino Acid and count occurrences</span></span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>    grouped <span class="op">=</span> melted_k.groupby([<span class="st">'Position'</span>, <span class="st">'aa'</span>]).size().reset_index(name<span class="op">=</span><span class="st">'Count'</span>)</span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a>    <span class="co"># get pivot table</span></span>
+<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a>    pivot_k <span class="op">=</span> grouped.pivot(index<span class="op">=</span><span class="st">'aa'</span>, columns<span class="op">=</span><span class="st">'Position'</span>, values<span class="op">=</span><span class="st">'Count'</span>).fillna(<span class="dv">0</span>)</span>
+<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb20-16"><a href="#cb20-16" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Get frequency by dividing the sum of each column</span></span>
+<span id="cb20-17"><a href="#cb20-17" aria-hidden="true" tabindex="-1"></a>    freq_k <span class="op">=</span> pivot_k<span class="op">/</span>pivot_k.<span class="bu">sum</span>()</span>
+<span id="cb20-18"><a href="#cb20-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-19"><a href="#cb20-19" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb20-20"><a href="#cb20-20" aria-hidden="true" tabindex="-1"></a>    <span class="co"># data from the kinase-substrate dataset, and format is Lew's paper's format</span></span>
+<span id="cb20-21"><a href="#cb20-21" aria-hidden="true" tabindex="-1"></a>    p_k_paper <span class="op">=</span> freq_k.reindex(index<span class="op">=</span>aa_order_paper)[position_paper]</span>
+<span id="cb20-22"><a href="#cb20-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-23"><a href="#cb20-23" aria-hidden="true" tabindex="-1"></a>    <span class="co"># full pivot data from kinase-substrate dataset</span></span>
+<span id="cb20-24"><a href="#cb20-24" aria-hidden="true" tabindex="-1"></a>    p_k <span class="op">=</span> freq_k.reindex(index<span class="op">=</span>aa_order)[position]</span>
+<span id="cb20-25"><a href="#cb20-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-26"><a href="#cb20-26" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb20-27"><a href="#cb20-27" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> p_k_paper, p_k</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="60">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> plot_raw_ks(k):</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>    p_k_paper, p_k <span class="op">=</span> get_freq(df3,k)</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>    raw_unavailable <span class="op">=</span> []</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>    k<span class="op">=</span>k.upper() <span class="co"># kinase in raw PSPA data is in upper case</span></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>    <span class="co"># PSPA data from Lew's paper</span></span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span>:     </span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>        p_raw <span class="op">=</span> get_one_kinase(raw,k).T</span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>        p_raw <span class="op">=</span> p_raw.reindex(index<span class="op">=</span>aa_order_paper)</span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> p_raw.unstack().values</span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>        y <span class="op">=</span> p_k_paper.unstack().values</span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a>        <span class="co"># draw raw vs. kinase-substrate correlation</span></span>
+<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a>        plt.title(<span class="ss">f'</span><span class="sc">{</span>k<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a>        plot_corr(x,y, xlabel<span class="op">=</span><span class="st">'PSPA'</span>,ylabel<span class="op">=</span><span class="st">'kinase-substrate dataset'</span>)</span>
+<span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb21-19"><a href="#cb21-19" aria-hidden="true" tabindex="-1"></a>        <span class="co"># draw raw PSPA data</span></span>
+<span id="cb21-20"><a href="#cb21-20" aria-hidden="true" tabindex="-1"></a>        plt.figure(figsize<span class="op">=</span>(<span class="dv">6</span>, <span class="dv">10</span>))</span>
+<span id="cb21-21"><a href="#cb21-21" aria-hidden="true" tabindex="-1"></a>        sns.heatmap(p_raw, cmap<span class="op">=</span><span class="st">'binary'</span>, annot<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb21-22"><a href="#cb21-22" aria-hidden="true" tabindex="-1"></a>        plt.title(<span class="ss">f'</span><span class="sc">{</span>k<span class="sc">}</span><span class="ss"> from PSPA data'</span>)</span>
+<span id="cb21-23"><a href="#cb21-23" aria-hidden="true" tabindex="-1"></a>        plt.show()</span>
+<span id="cb21-24"><a href="#cb21-24" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb21-25"><a href="#cb21-25" aria-hidden="true" tabindex="-1"></a>    <span class="cf">except</span>:</span>
+<span id="cb21-26"><a href="#cb21-26" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f'</span><span class="sc">{</span>k<span class="sc">}</span><span class="ss"> is not available in PSPA data'</span>)</span>
+<span id="cb21-27"><a href="#cb21-27" aria-hidden="true" tabindex="-1"></a>        raw_unavailable.append(k)</span>
+<span id="cb21-28"><a href="#cb21-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-29"><a href="#cb21-29" aria-hidden="true" tabindex="-1"></a>    <span class="co"># draw kinase-substrate heatmap using paper's format</span></span>
+<span id="cb21-30"><a href="#cb21-30" aria-hidden="true" tabindex="-1"></a>    plt.figure(figsize<span class="op">=</span>(<span class="dv">6</span>, <span class="dv">10</span>))</span>
+<span id="cb21-31"><a href="#cb21-31" aria-hidden="true" tabindex="-1"></a>    sns.heatmap(p_k_paper, cmap<span class="op">=</span><span class="st">'binary'</span>, annot<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb21-32"><a href="#cb21-32" aria-hidden="true" tabindex="-1"></a>    plt.title(<span class="ss">f'</span><span class="sc">{</span>k<span class="sc">}</span><span class="ss"> from kinase substrate dataset'</span>)</span>
+<span id="cb21-33"><a href="#cb21-33" aria-hidden="true" tabindex="-1"></a>    plt.show()</span>
+<span id="cb21-34"><a href="#cb21-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-35"><a href="#cb21-35" aria-hidden="true" tabindex="-1"></a>    <span class="co"># draw full heatmap</span></span>
+<span id="cb21-36"><a href="#cb21-36" aria-hidden="true" tabindex="-1"></a>    plt.figure(figsize<span class="op">=</span>(<span class="dv">9</span>, <span class="dv">11</span>))</span>
+<span id="cb21-37"><a href="#cb21-37" aria-hidden="true" tabindex="-1"></a>    sns.heatmap(p_k, cmap<span class="op">=</span><span class="st">'binary'</span>, annot<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb21-38"><a href="#cb21-38" aria-hidden="true" tabindex="-1"></a>    plt.title(<span class="ss">f'</span><span class="sc">{</span>k<span class="sc">}</span><span class="ss"> from kinase substrate dataset (full)'</span>)</span>
+<span id="cb21-39"><a href="#cb21-39" aria-hidden="true" tabindex="-1"></a>    plt.show()</span>
+<span id="cb21-40"><a href="#cb21-40" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb21-41"><a href="#cb21-41" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> raw_unavailable</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="plot" class="level2">
+<h2 class="anchored" data-anchor-id="plot">Plot</h2>
+<div class="cell" data-execution_count="61">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>cnt_50.sort_values(<span class="st">'cnt'</span>,ascending<span class="op">=</span><span class="va">False</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="61">
+<div>
+
+
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">KINASE</th>
+<th data-quarto-table-cell-role="th">cnt</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">333</td>
+<td>PKACA</td>
+<td>1707</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">336</td>
+<td>PKCA</td>
+<td>1094</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">88</td>
+<td>CK2A1</td>
+<td>960</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">127</td>
+<td>ERK2</td>
+<td>894</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">58</td>
+<td>CDK1</td>
+<td>869</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">264</td>
+<td>MST1</td>
+<td>54</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">379</td>
+<td>ROCK2</td>
+<td>53</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">119</td>
+<td>DYRK2</td>
+<td>52</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">44</td>
+<td>CAMK1A</td>
+<td>51</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">57</td>
+<td>CDC7</td>
+<td>51</td>
+</tr>
+</tbody>
+</table>
+
+<p>84 rows × 2 columns</p>
+</div>
+</div>
+</div>
+<div class="cell" data-tags="[]" data-execution_count="62">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i, r <span class="kw">in</span> cnt_50.sort_values(<span class="st">'cnt'</span>,ascending<span class="op">=</span><span class="va">False</span>).iterrows():</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>    k <span class="op">=</span> r.KINASE</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f'--------------------</span><span class="sc">{</span>k<span class="sc">}</span><span class="ss">, number of substrates: </span><span class="sc">{</span>r<span class="sc">.</span>cnt<span class="sc">}</span><span class="ss">--------------------'</span>)</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>    plot_raw_ks(k)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>--------------------PKACA, number of substrates: 1707--------------------
+--------------------PKCA, number of substrates: 1094--------------------
+--------------------CK2A1, number of substrates: 960--------------------
+--------------------ERK2, number of substrates: 894--------------------
+--------------------CDK1, number of substrates: 869--------------------
+--------------------Src, number of substrates: 801--------------------
+SRC is not available in PSPA data
+--------------------ERK1, number of substrates: 673--------------------
+--------------------GSK3B, number of substrates: 599--------------------
+--------------------Akt1, number of substrates: 563--------------------
+--------------------CDK2, number of substrates: 511--------------------
+--------------------CAMK2A, number of substrates: 499--------------------
+--------------------CDK5, number of substrates: 411--------------------
+--------------------P38A, number of substrates: 385--------------------
+--------------------PLK1, number of substrates: 368--------------------
+--------------------ATM, number of substrates: 336--------------------
+--------------------AMPKA1, number of substrates: 330--------------------
+--------------------JNK1, number of substrates: 295--------------------
+--------------------Abl, number of substrates: 293--------------------
+ABL is not available in PSPA data
+--------------------mTOR, number of substrates: 264--------------------
+--------------------Fyn, number of substrates: 254--------------------
+FYN is not available in PSPA data
+--------------------AurB, number of substrates: 247--------------------
+--------------------PKCD, number of substrates: 216--------------------
+--------------------Chk1, number of substrates: 215--------------------
+--------------------CK1A, number of substrates: 202--------------------
+--------------------CK1D, number of substrates: 168--------------------
+--------------------PKG1, number of substrates: 159--------------------
+--------------------LYN, number of substrates: 157--------------------
+LYN is not available in PSPA data
+--------------------GSK3A, number of substrates: 153--------------------
+--------------------AurA, number of substrates: 152--------------------
+--------------------Lck, number of substrates: 151--------------------
+LCK is not available in PSPA data
+--------------------DNAPK, number of substrates: 151--------------------
+--------------------PKCZ, number of substrates: 149--------------------
+--------------------PKCE, number of substrates: 149--------------------
+--------------------EGFR, number of substrates: 144--------------------
+EGFR is not available in PSPA data
+--------------------PKCB, number of substrates: 139--------------------
+--------------------p90RSK, number of substrates: 138--------------------
+--------------------GRK2, number of substrates: 137--------------------
+--------------------PAK1, number of substrates: 134--------------------
+--------------------IKKB, number of substrates: 129--------------------
+--------------------MAPKAPK2, number of substrates: 129--------------------
+--------------------ATR, number of substrates: 128--------------------
+--------------------TBK1, number of substrates: 125--------------------
+--------------------PRKD1, number of substrates: 122--------------------
+--------------------ROCK1, number of substrates: 112--------------------
+--------------------LRRK2, number of substrates: 104--------------------
+--------------------Akt2, number of substrates: 104--------------------
+--------------------JNK2, number of substrates: 104--------------------
+--------------------CDK4, number of substrates: 100--------------------
+--------------------Syk, number of substrates: 99--------------------
+SYK is not available in PSPA data
+--------------------ULK1, number of substrates: 98--------------------
+--------------------p70S6K, number of substrates: 98--------------------
+--------------------Src iso1, number of substrates: 96--------------------
+SRC ISO1 is not available in PSPA data
+--------------------SGK1, number of substrates: 92--------------------
+--------------------JAK2, number of substrates: 89--------------------
+JAK2 is not available in PSPA data
+--------------------AMPKA2, number of substrates: 88--------------------
+--------------------RSK2, number of substrates: 87--------------------
+--------------------Pim1, number of substrates: 85--------------------
+--------------------PKCB iso2, number of substrates: 84--------------------
+PKCB ISO2 is not available in PSPA data
+--------------------INSR, number of substrates: 84--------------------
+INSR is not available in PSPA data
+--------------------Chk2, number of substrates: 82--------------------
+--------------------DYRK1A, number of substrates: 78--------------------
+--------------------PKCT, number of substrates: 74--------------------
+--------------------CK1E, number of substrates: 72--------------------
+--------------------HIPK2, number of substrates: 71--------------------
+--------------------CAMK2B, number of substrates: 69--------------------
+--------------------TTK, number of substrates: 68--------------------
+--------------------PAK2, number of substrates: 67--------------------
+--------------------IKKA, number of substrates: 67--------------------
+--------------------ChaK1, number of substrates: 66--------------------
+--------------------PDK1, number of substrates: 66--------------------
+--------------------PKCG, number of substrates: 65--------------------
+--------------------MEK1, number of substrates: 62--------------------
+--------------------CDK6, number of substrates: 61--------------------
+--------------------LKB1, number of substrates: 61--------------------
+--------------------CDK7, number of substrates: 61--------------------
+--------------------PKCI, number of substrates: 60--------------------
+--------------------P38G, number of substrates: 57--------------------
+--------------------CDK9, number of substrates: 57--------------------
+--------------------IKKE, number of substrates: 56--------------------
+--------------------MST1, number of substrates: 54--------------------
+--------------------ROCK2, number of substrates: 53--------------------
+ROCK2 is not available in PSPA data
+--------------------DYRK2, number of substrates: 52--------------------
+--------------------CAMK1A, number of substrates: 51--------------------
+--------------------CDC7, number of substrates: 51--------------------</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-2.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-3.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-4.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-5.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-6.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-7.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-8.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-9.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-10.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-11.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-12.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-13.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-14.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-15.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-16.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-17.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-18.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-19.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-20.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-21.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-22.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-23.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-24.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-25.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-26.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-27.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-28.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-29.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-30.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-31.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-32.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-33.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-34.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-35.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-36.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-37.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-38.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-39.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-40.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-41.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-42.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-43.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-44.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-45.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-46.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-47.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-48.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-49.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-50.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-51.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-52.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-53.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-54.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-55.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-56.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-57.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-58.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-59.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-60.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-61.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-62.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-63.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-64.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-65.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-66.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-67.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-68.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-69.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-70.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-71.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-72.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-73.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-74.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-75.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-76.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-77.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-78.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-79.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-80.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-81.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-82.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-83.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-84.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-85.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-86.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-87.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-88.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-89.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-90.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-91.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-92.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-93.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-94.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-95.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-96.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-97.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-98.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-99.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-100.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-101.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-102.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-103.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-104.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-105.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-106.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-107.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-108.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-109.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-110.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-111.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-112.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-113.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-114.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-115.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-116.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-117.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-118.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-119.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-120.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-121.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-122.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-123.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-124.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-125.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-126.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-127.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-128.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-129.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-130.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-131.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-132.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-133.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-134.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-135.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-136.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-137.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-138.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-139.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-140.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-141.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-142.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-143.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-144.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-145.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-146.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-147.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-148.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-149.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-150.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-151.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-152.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-153.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-154.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-155.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-156.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-157.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-158.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-159.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-160.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-161.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-162.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-163.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-164.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-165.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-166.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-167.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-168.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-169.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-170.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-171.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-172.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-173.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-174.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-175.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-176.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-177.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-178.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-179.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-180.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-181.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-182.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-183.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-184.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-185.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-186.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-187.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-188.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-189.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-190.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-191.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-192.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-193.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-194.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-195.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-196.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-197.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-198.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-199.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-200.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-201.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-202.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-203.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-204.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-205.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-206.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-207.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-208.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-209.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-210.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-211.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-212.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-213.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-214.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-215.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-216.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-217.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-218.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-219.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-220.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-221.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-222.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-223.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-224.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-225.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-226.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-227.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-228.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-229.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-230.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-231.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-232.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-233.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-234.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-235.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-236.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-237.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-238.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-239.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-240.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-241.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-242.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-243.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-244.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-245.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-246.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-247.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-248.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-249.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-250.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-251.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-252.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-253.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-254.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-255.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-256.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-257.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-258.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-259.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-260.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-261.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-262.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-263.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-264.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-265.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-266.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-267.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-268.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-269.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-270.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-271.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-272.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-273.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-274.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-275.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-276.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-277.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-278.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-279.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-280.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-281.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-282.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-283.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-284.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-285.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-286.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-287.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-288.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-289.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-290.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-291.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-292.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-293.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-294.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-295.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-296.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-297.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-298.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-299.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-300.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-301.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-302.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-303.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-304.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-305.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-306.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-307.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-308.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-309.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-310.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-311.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-312.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-313.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="3_Kinase_substrate_dataset_files/figure-html/cell-23-output-314.png" class="img-fluid"></p>
+</div>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
