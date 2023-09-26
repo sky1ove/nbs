@@ -5,4 +5,6 @@ website:
       - section: Notebooks
         contents:
           - notebooks/1_AlphaMissense_to_pdb.ipynb
-          - notebooks/1_bubble_plot.ipynb
+          - notebooks/1_Bubble_plot.ipynb
+          - notebooks/2_Get_top_genes_Reactome.ipynb
+          - notebooks/3_Kinase_substrate_dataset.ipynb
